@@ -1,0 +1,9 @@
+---
+title: "Run Original Code (Python 2.7) on Kaggle"
+---
+
+พูดถึง score ของ notebook + leaderboard
+
+พูดถึง การแก้โค้ด ตรง level_1
+
+บลาๆ จำไม่ได้ กลับไปดูในเวอร์ชั่นแรกๆของ kaggle notebook หรือไม่ก็ plan.doc

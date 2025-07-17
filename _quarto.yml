@@ -1,0 +1,37 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Kaggle's Solution: Human or Robot?"
+  sidebar:
+    style: "docked"
+    search: true
+    contents:
+      - text: "Introduction"
+        href: index.qmd
+      - section: "Original Code (Python)"
+        contents:
+          - text: "1. Get It Up and Running"
+            href: pages/running.qmd
+          - text: "2. Modify Model Training"
+            href: pages/mod-train.qmd
+      - section: "Converted Code (R)"
+        contents:
+          - text: "3. Features and Models"
+            href: pages/fe-mod.qmd
+          - text: "4. Visualization"
+            href: pages/viz.qmd
+
+
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+    css: styles.css
+    toc: true
+
+editor: visual
+

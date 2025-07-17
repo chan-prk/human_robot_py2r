@@ -1,0 +1,23 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Introduction",
+    "section": "",
+    "text": "หน้าแรก เอาโค้ดเก่ามาทำให้รันได้\nหน้าสอง เพราะว่าถ้าดูโค้ดในส่วนของการ train model เจ้าของข้ามส่วนที่เป็น model/hyperparameter tuning. ก็เลยต้องใส่เองเพื่อความสมบูรณ์ อธิบายด้วยนะว่า เป็นไปได้ว่าระหว่างการแข่งขันเจ้าของอาจจะมีโค้ดส่วนนี้เพื่อหา algorithm หรือ parameter ที่ดีที่สุด แต่หลังจากสิ้นสุดการแข่งแล้ว เจ้าของซึ่งรู้คำตอบอยู่แล้วน่าจะ hard code ลงไปใน script ที่แชร์ให้สาธารณะ โดยที่ผู้ที่มาดาวน์โหลด script สามารถ นำไปใช้ได้โดยไม่ต้องเสียเวลารัน script เป็นเวลานานเพื่อหาคำตอบว่า algorithm/parameter ไหนดีที่สุด)\nหน้าสาม กับ หน้าสี่ จะเป็นการ เขียนโค้ดขึ้นใหม่โดยอิงจากโค้ดใน section ก่อนหน้า ส่วนหลักๆในโค้ด ตามที่เราได้เห็นกันมา ก็เป็นการสร้าง feature และ train model ซึ่งเราจะอธิบายส่วนนี้ในหน้าสาม นอกจากนี้ ถ้าสังเกตใน original code ก็จะมีโค้ดส่วนที่เป็น data visualization ที่ถูก comment ไว้ ในหน้าที่สี่เราจะแสดง plot ที่ถูกสร้างใน step นี้",
+    "crumbs": [
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "pages/running.html",
+    "href": "pages/running.html",
+    "title": "Run Original Code (Python 2.7) on Kaggle",
+    "section": "",
+    "text": "พูดถึง score ของ notebook + leaderboard\nพูดถึง การแก้โค้ด ตรง level_1\nบลาๆ จำไม่ได้ กลับไปดูในเวอร์ชั่นแรกๆของ kaggle notebook หรือไม่ก็ plan.doc",
+    "crumbs": [
+      "Original Code (Python)",
+      "1. Get It Up and Running"
+    ]
+  }
+]
