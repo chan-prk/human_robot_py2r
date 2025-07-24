@@ -2,8 +2,335 @@
 title: "Run Original Code (Python 2.7) on Kaggle"
 ---
 
-พูดถึง score ของ notebook + leaderboard
+# บทนำ
 
-พูดถึง การแก้โค้ด ตรง level_1
+ก่อนที่จะเริ่มต้นทำการพอร์ตโค้ดจาก Python เป็น R สิ่งแรกที่ผมทำคือการรันโค้ดต้นฉบับดูก่อน การทำแบบนี้มีประโยชน์คือ หลังจากที่เราสามารถรันโค้ดต้นฉบับได้แล้ว เราจะได้เอาต์พุตคือไฟล์ที่ชื่อว่า submission.csv ซึ่งเราสามารถทำการ submit เข้าไปยังการแข่งขันในเว็บ Kaggle และได้รับแจ้งว่าคะแนนเป็นเท่าไหร่ ในภายหลังเราสามารถใช้คะแนนนี้เป็น baseline ในการชี้วัดว่า R implementation ของเราทำงานถูกหรือไม่ โดยการ submit เอาต์พุตที่ได้มาจากการรันโค้ด R แล้วเปรียบเทียบคะแนนที่ได้รับกับคะแนนของโค้ดต้นฉบับ
 
-บลาๆ จำไม่ได้ กลับไปดูในเวอร์ชั่นแรกๆของ kaggle notebook หรือไม่ก็ plan.doc
+**Note.**
+
+-   โค้ดต้นฉบับสามารถดาวน์โหลดได้จาก small yellow duck's [github {{< iconify fa6-brands github >}}](https://github.com/small-yellow-duck/facebook_auction)
+-   ด้วยการแก้ไขจากโค้ดต้นฉบับ ผมได้สร้างโค้ดพร้อมคะแนนจากการ submit ไว้แล้วเป็น Kaggle's notebook สามารถดูได้ที่ [Kaggle](https://www.kaggle.com/code/cprk87/original-get-it-running)
+    -   คะแนนของ submission ใน notebook จะเป็น 0.93888 (Private Score)
+    -   คะแนนของ small yellow duck ถ้าดูจาก [leaderboard](https://www.kaggle.com/competitions/facebook-recruiting-iv-human-or-bot/leaderboard) จะเป็น 0.94167 
+
+จะเห็นว่าคะแนนจาก script ที่ผมวางใน kaggle กับ คะแนนของ small yellow duck มีความเตกต่างกันอยู่ ความแตกต่างนี้อาจเกิดได้จากหลายสาเหตุเช่น เวอร์ชั่นก์ของ Python รวมถึงแพ็คเกจที่ทำการติดตั้งไม่เหมือนกันทั้งหมด (เราไม่มีทางทราบว่า small yellow duck ใช้ package เวอร์ชั่นไหนบ้างเนื่องจากไม่ได้เปิดเผย requirements.txt) สาเหตุอื่นก็อย่างเช่น random seed ของ machine learning model แตกต่างกัน เป็นต้น
+
+อย่างไรก็ดี คะแนน 0.93888 ของโค้ดของผม ก็จัดว่าเป็นคะแนนที่สูงถ้าเทียบกับผู้เข้าแข่งขันอื่นๆใน leaderboard โดยที่จริงๆแล้วคะแนนนี้อยู่ระหว่างคะแนนของผู้เข้าแข่งขันที่ได้อันดับ 11 และ 12 ดังนั้นจึงอาจพอสรุปได้ว่า โค้ดที่ผมนำมาวางใน kaggle นี้เป็นโค้ดที่ใช้การได้ เหมาะแก่การนำมาเป็นต้นแบบในการเขียนขึ้นใหม่ในภาษา R
+
+<center>
+  <figure>
+      <img src="../images/page_1/leaderboard.png" width="90%" style="border: 0.5px solid #555;">
+      <figcaption>*source: [https://www.kaggle.com/competitions/facebook-recruiting-iv-human-or-bot/leaderboard](https://www.kaggle.com/competitions/facebook-recruiting-iv-human-or-bot/leaderboard)*</figcaption>
+  </figure>
+</center>
+
+# เนื้อหาหลัก
+
+เนื้อหาถัดไปของหน้านี้ จะเป็นการอธิบายถึงขั้นตอนว่า หลังจากนำโค้ดต้นฉบับของ small yellow duck มาวางใน Kaggle's notebook แล้ว จะต้องทำอะไรบ้างเพื่อให้โค้ดสามารถรัน และสร้างเอาต์พุตที่สามารถ submit เข้าไปในการแข่งขันได้
+
+
+## Guess the Python Version
+
+โค้ดต้นฉบับของ small yellow duck ถูกคอมมิตใน github ในเดือนมิถุนายนปี 2015 (ดูได้จาก [github {{< iconify fa6-brands github >}}](https://github.com/small-yellow-duck/facebook_auction/commits/master/)) ซึ่งในช่วงนั้น Python 2 ยังเป็นที่นิยมใช้กันอยู่ จึงมีความเป็นไปได้ว่า โค้ดต้นฉบับจะใช้ Python เวอร์ชั่นก์นี้ นอกจากนี้ยังมีอีกข้อสังเกตหนึ่งคือ ในโค้ดของ small yellow duck มีการใช้คำสั่ง print โดยไม่ใส่วงเล็บล้อมอาร์กิวเมนต์ ซึ่งใน Python 3 ไม่อนุญาตให้ทำแบบนี้ ในขณะที่ใน Python 2 สามารถทำได้
+
+```python
+def bid_order(X, bids):
+    bids = bids.groupby('auction').apply(enumerate)
+    
+    a = bids.sort('time', ascending=True).groupby('auction', as_index=False).first()
+    b = a.groupby('bidder_id').size().reset_index()
+    b= b.rename(columns = {0:'num_first_bid'})    
+    X = pd.merge(X, b, on='bidder_id', how='left')
+    print X.columns
+    ...
+```
+
+เพื่อความเฉพาะเจาะจงยิ่งขึ้น เรามาดู chart ที่บ่งบอกถึงสถานะเวอร์ชันของ Python จะเห็นได้ว่า ณ ปี 2015 Python 2.6 จะเก่าเกินไปเพราะอยู่ในสถานะ end-of-life ผมจึงคิดว่า ณ ขณะนั้น มีความเป็นไปได้ว่า small yellow duck จะใช้ Python 2.7 มากที่สุด
+
+<center>
+  <figure>
+      <img src="../images/page_1/python_version.png" width="70%" height="70%" style="border: 0.5px solid #555;">
+      <figcaption>*source: [https://devguide.python.org/versions/](https://devguide.python.org/versions/)*</figcaption>
+  </figure>
+</center>
+
+
+## Install Python 2.7 and Dependencies
+
+ณ เวลาที่เขียนบทความนี้ เวอร์ชั่นของ Python ที่รันบน Kaggle notebook เป็น Python 3.13 ดังนั้นถ้าเราจะรัน Python 2.7 จะต้องหาวิธีรัน Python หลายเวอร์ชั่น บน notebook ซึ่งผมจะใช้ เครื่องมือที่ชื่อว่า Miniconda เพื่อทำสิ่งนี้
+
+<center>
+  <figure>
+      <img src="../images/page_1/kaggle_default_python.png" style="border: 0.5px solid #555;">
+      <figcaption>*Default เวอร์ชั่นของ Python ใน Kaggle notebook, ข้อมูล ณ กรกฎาคม 2025*</figcaption>
+  </figure>
+</center>
+
+<center>
+  <figure>
+      <img src="../images/page_1/miniconda_explained.png" width="70%" height="70%" style="border: 0.5px solid #555;">
+      <figcaption>*source: คำตอบจาก Gemini*</figcaption>
+  </figure>
+</center>
+
+### Install Miniconda
+
+จากการเข้าไปดูในเนื้อหาของไฟล์ในโฟลเดอร์ `etc` พบว่า Kaggle notebook รันอยู่บนระบบปฎิบัติการ Ubuntu ซึ่งเป็น Linux 
+
+<center>
+  <figure>
+      <img src="../images/page_1/kaggle_os.png" width="70%" height="70%" style="border: 0.5px solid #555;">
+      <figcaption>*เวอร์ชั่นของระบบปฎิบัติการที่ Kaggle notebook ตั้งอยู่*</figcaption>
+  </figure>
+</center>
+
+ซึ่งถ้าเข้าไปดูขั้นตอนการติดตั้ง Miniconda ใน [official website](https://www.anaconda.com/docs/getting-started/miniconda/install#linux) ก็จะพบคำแนะนำให้ติดตั้งด้วยคำสั่งดังต่อไปนี้
+```bash
+mkdir -p ~/miniconda3
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+rm ~/miniconda3/miniconda.sh
+```
+
+ใน notebook ของผม ได้ทำการแก้ไขเล็กน้อยในบรรทัดที่สาม โดยได้แก้ argument ตัวสุดท้ายให้เป็น `/usr/local`
+```bash
+bash ~/miniconda3/miniconda.sh -b -u -p /usr/local
+```
+
+ที่ทำอย่างนี้เพื่อให้ executable `conda` ถูกติดตั้งลงไปใน `/usr/local/bin` ซึ่งอยู่ใน environment variable `PATH` อยู่แล้ว
+<center>
+  <figure>
+      <img src="../images/page_1/kaggle_env_path.png" width="70%" height="70%" style="border: 0.5px solid #555;">
+      <figcaption>*โฟลเดอร์ที่ miniconda ทำการติดตั้ง และ PATH*</figcaption>
+  </figure>
+</center>
+
+### Creat Environment and Activate it
+
+เราสามารถใช้ คำสั่ง `conda` ในการสร้าง virtual environment โดยที่ระบุเวอร์ชั่นของ Python ที่จะให้ทำการติดตั้งด้วยได้
+```bash
+!conda create -y -q --name py27 python=2.7
+```
+
+หลังจากสร้าง virtual environment แล้ว เราสามารถ activate มันเพื่อใช้งาน  <br>
+ในรูปด้านล่างแสดงถึง
+
+- ก่อนที่เราจะ activate ถ้าใช้คำสั่ง python จะเป็นการเรียก python default version ของ Kaggle notebook
+- ภายในบรรทัดเดียวกับที่เรา activate virtual environment (ที่มีชื่อว่า `py27`) การใช้คำสั่ง python จะไปเรียก python เวอร์ชั่นที่เราติดตั้งไว้ใน environment
+
+<center>
+  <figure>
+      <img src="../images/page_1/python_after_activate.png" width="70%" height="70%" style="border: 0.5px solid #555;">
+      <figcaption>*บรรทัดแรก รัน Python เฉยๆ ในขณะที่บรรทัดที่สอง รัน Python พร้อมกับ activate virtual environment*</figcaption>
+  </figure>
+</center>
+
+### Install Dependencies
+
+Virtual environment ที่เพิ่งถูกสร้างขึ้นมา ถึงแม้จะมีเวอร์ชันของ Python ที่เข้ากันได้กับโค้ดของ small yellow duck แล้ว แต่ตัวโค้ดก็ยังไม่สามารถรันได้ เพราะใน environment ยังไม่ได้ทำการลง Python packages ที่ในโค้ดใช้
+
+เราสามารถดูว่า packages ที่ต้องติดตั้งมีอะไรบ้างได้จากที่บรรทัดที่เป็นการ import
+```python
+import pandas as pd
+import numpy as np
+#from matplotlib import pyplot as plt
+
+import sklearn.preprocessing as preprocessing
+from sklearn.linear_model import SGDClassifier
+from sklearn.svm import SVC
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.linear_model import LogisticRegression, BayesianRidge
+from sklearn.cluster import MiniBatchKMeans
+from sklearn.metrics import roc_auc_score
+```
+จะเห็นได้ว่า package ที่ในโค้ดใช้ก็จะมี `pandas`, `numpy`, `matplotlib` และ `scikit-learn` เท่านั้น
+
+ทีนี้หากผู้อ่านดูโค้ดด้านบนอาจจะสังเกตว่าบรรทัด `matplotlib` ได้ถูกคอมเมนต์ไว้ ซึ่งผมขอสารภาพว่าผมเป็นคนคอมเมนต์ออกเอง เหตุผลมาจากว่า การที่มีบรรทัดนี้อยู่จะบังคับให้ ผมต้องติดตั้ง package ที่ชื่อ `matplotlib-inline` ซึ่งตัว installer ไม่สามารถหาเวอร์ชั่นที่เหมาะสมกับ Python 2.7 ได้ ดังที่แสดงไว้ใน error ด้านล่าง
+
+```python
+Could not solve for environment specs
+The following packages are incompatible
+├─ matplotlib-inline =* * is installable with the potential options
+│  ├─ matplotlib-inline 0.1.6 would require
+│  │  └─ python >=3.10,<3.11.0a0 *, which can be installed;
+│  ├─ matplotlib-inline 0.1.6 would require
+│  │  └─ python >=3.11,<3.12.0a0 *, which can be installed;
+│  ├─ matplotlib-inline 0.1.6 would require
+│  │  └─ python >=3.12,<3.13.0a0 *, which can be installed;
+│  ├─ matplotlib-inline 0.1.6 would require
+│  │  └─ python >=3.13,<3.14.0a0 *, which can be installed;
+│  ├─ matplotlib-inline 0.1.6 would require
+│  │  └─ python >=3.7,<3.8.0a0 *, which can be installed;
+│  ├─ matplotlib-inline 0.1.6 would require
+│  │  └─ python >=3.8,<3.9.0a0 *, which can be installed;
+│  ├─ matplotlib-inline 0.1.6 would require
+│  │  └─ python >=3.9,<3.10.0a0 *, which can be installed;
+│  └─ matplotlib-inline 0.1.2 would require
+│     └─ python >=3.6 *, which can be installed;
+└─ pin on python 2.7.* =* * is not installable because it requires
+   └─ python =2.7 *, which conflicts with any installable versions previously reported.
+
+Pins seem to be involved in the conflict. Currently pinned specs:
+ - python=2.7
+```
+
+อย่างไรก็ดี ถ้าลองอ่านโค้ดต้นฉบับดูจะพบว่า **บรรทัดที่เกี่ยวกับการ plot โดยใช้  matplotlib นั้นถูกคอมเมนต์ไว้โดย small yellow duck อยู่แล้ว** ทำให้จริงๆแล้วถึงจะไม่ import `matplotlib` โค้ดก็สามารถทำงานได้ตามปกติ
+
+### Issues with Pandas
+
+ขออนุญาตย้อนกลับมาเรื่องการ ติดตั้ง package ใน virtual environment นะครับ  <br/>
+เช่นเดียวกับที่เรารัน "python --version" พร้อมกับการ activate environment ใน section ด้านบน เราสามารถรัน "python -m pip install" เพื่อทำการติดตั้ง package ลงในไลบรารีของ environment ที่เรา activate ได้
+
+คำสั่งด้านล่างทำการติดตั้ง `pandas`, `numpy` และ `scikit-learn` ลงใน virtual environment `py27`
+```bash
+!source activate py27 && python -m pip install pandas numpy scikit-learn
+```
+
+อย่างไรก็ดี คำสั่งนี้มีปัญหาก็คือ เนื่องจากเราไม่ระบุเวอร์ชันที่เจาะจงของ package ตัว `pip` จะลง pandas(และ numpy, scikit-learn) เป็นเวอร์ชันที่ใหม่ที่สุดที่เข้ากันได้กับ Python 2.7 ผลลัพธ์ของการรันโค้ดต้นฉบับ หลังจากติดตั้ง package ด้วยคำสั่งนี้คือ error
+```python
+Traceback (most recent call last):
+  File "<stdin>", line 1015, in <module>
+  File "<stdin>", line 69, in load
+  File "/usr/local/envs/py27/lib/python2.7/site-packages/pandas/core/generic.py", line 5067, in __getattr__
+    return object.__getattribute__(self, name)
+AttributeError: 'DataFrame' object has no attribute 'sort'
+
+```
+
+Error นี้เกิดมาจากการที่ โค้ดต้นฉบับใช้ฟังก์ชัน `sort` ของ object `DataFrame`
+```python
+def load():
+	...
+	bids = bids.sort(['auction', 'time'])
+	...
+	b = bot_or_human[['bidder_id', 'address']].groupby('address').size().reset_index().sort(0, ascending=False)
+        ...
+```
+ซึ่งฟังก์ชั่นนี้ใช้ได้แต่เฉพาะใน `pandas` ในเวอร์ชันที่ค่อนข้างเก่า แต่ในคำสั่งติดตั้งของเราเลือกลง `pandas`เวอร์ชั่นใหม่ที่สุดที่เป็นไปได้(สำหรับ Python 2.7)
+
+ข้อมูลจาก Stackoverflow ระบุว่าฟังก์ชั่นนี้ถูก deprecated ใน Pandas เวอร์ชัน 0.17.0 และถูกเอาออกใน เวอร์ชัน 0.20.0
+<center>
+  <figure>
+      <img src="../images/page_1/code_sort.png" width="70%" height="70%" style="border: 0.5px solid #555;">
+      <figcaption>*source: [https://stackoverflow.com/a/44123892/718529](https://stackoverflow.com/a/44123892/718529)*</figcaption>
+  </figure>
+</center>
+
+จากข้อมูลตรงนี้ สิ่งที่สมเหตุสมผลที่สุดก็คือการ ติดตั้งโดยระบุเวอร์ชันของ Pandas เป็นเวอร์ชันก่อน 0.17.0 อย่างไรก็ดี ผมได้ลองติดตั้งทั้ง Pandas 0.14.X, 0.15.X และ 0.16.X แล้วพบว่าเมื่อรันโค้ดต้นฉบับภายหลังการติดตั้ง จะเกิด ImportError คล้ายๆกันหมดในทุกเวอร์ชัน ต่อไปนี้เป็นตัวอย่าง error ที่พบ (ขออนุญาตนำมาแสดงเพียงสองเวอร์ชันเท่านั้น)
+```python
+Traceback (most recent call last):
+  File "<stdin>", line 14, in <module>
+  File "/usr/local/envs/py27/lib/python2.7/site-packages/pandas/__init__.py", line 6, in <module>
+    from . import hashtable, tslib, lib
+ImportError: /usr/local/envs/py27/lib/python2.7/site-packages/pandas/lib.so: undefined symbol: is_float_object
+```
+*ผลลัพธ์ของการรันโค้ด Python เมื่อทำการลง pandas 0.14.1*
+
+```python
+Traceback (most recent call last):
+  File "<stdin>", line 14, in <module>
+  File "/usr/local/envs/py27/lib/python2.7/site-packages/pandas/__init__.py", line 7, in <module>
+    from . import hashtable, tslib, lib
+  File "pandas/tslib.pyx", line 2839, in init pandas.tslib (pandas/tslib.c:80041)
+  File "pandas/algos.pyx", line 64, in init pandas.algos (pandas/algos.c:180213)
+ImportError: /usr/local/envs/py27/lib/python2.7/site-packages/pandas/lib.so: undefined symbol: is_float_object
+```
+*ผลลัพธ์ของการรันโค้ด Python เมื่อทำการลง pandas 0.15.0*
+
+Error คล้ายๆกันนี้เกิดขึ้นไปจนถึง Pandas เวอร์ชัน 0.17.X จนเมื่่อผมลองติดตั้ง Pandas 0.18.0 ปัญหาก็หายไป สรุปความได้ว่าคำสั่งติดตั้ง packages ที่ผมตัดสินใจใช้ในโค้ดที่ทำการแก้ไขก็จะเป็น
+```bash
+!source activate py27 && python -m pip install pandas==0.18.0 numpy scikit-learn
+```
+ซึ่ง ณ เวอร์ชั่นนี้ ฟังก์ชั่น `DataFrame.sort` ยังถูกแค่เพียง deprecated เท่านั้นแต่ยังไม่ถูก removed ดังนั้นข้อเสียก็จะเป็นเพียงว่าเวลารันโค้ดจะมีคำเตือนแบบนี้ปรากฎ
+```python
+<stdin>:70: FutureWarning: sort(columns=....) is deprecated, use sort_values(by=.....)
+```
+
+## Edit and Run the Code
+
+มีสองจุดที่ต้องทำการแก้ไข ก่อนที่จะทำให้โค้ดสามารถรันได้
+
+ประการแรกไม่ซับซ้อนอะไร เนื่องจากว่าตัวโค้ดต้นฉบับจะทำแค่ประกาศและเขียนโค้ดของฟังก์ชั่น ถ้าเราจะรันก็จะต้องเพิ่มบรรทัดที่สั่งรันฟังชันก์เหล่านั้นเท่านั้นเอง ซึ่ง small yellow duck ได้ใส่คำอธิบายวิธีรันโค้ดไว้ในคอมเมนต์ด้านบนสุดของโค้ดดังในรูป
+<center>
+  <figure>
+      <img src="../images/page_1/code_comment.png" width="70%" height="70%" style="border: 0.5px solid #555;">
+      <figcaption>*คอมเมนต์โดย small yellow duck*</figcaption>
+  </figure>
+</center>
+
+ซึ่งผมก็แค่นำโค้ดจากคอมเมนต์มาใส่ไว้ที่ด้านล่างสุดของโค้ดก่อนที่จะคลิกรันใน Kaggle notebook
+<center>
+  <figure>
+      <img src="../images/page_1/code_run_the_code.png" width="70%" height="70%" style="border: 0.5px solid #555;">
+      <figcaption>*เพิ่มการสั่งรันโค้ดไว้ที่ด้านล่างสุดของโค้ด*</figcaption>
+  </figure>
+</center>
+
+### Fix KeyError
+
+หลังจากแก้ไขจุดแรกไปแล้วและสั่งรัน ผลลัพธ์คือ `KeyError` ซึ่งนี่แหละคือจุดที่สองซึ่งต้องทำการแก้ไข(เพื่อให้ error นี้หายไป)
+```python
+Traceback (most recent call last):
+  File "<stdin>", line 1020, in <module>
+  File "<stdin>", line 858, in build_X
+  File "<stdin>", line 494, in user_countries_per_auction
+  File "/usr/local/envs/py27/lib/python2.7/site-packages/pandas/core/frame.py", line 1986, in __getitem__
+    return self._getitem_array(key)
+  File "/usr/local/envs/py27/lib/python2.7/site-packages/pandas/core/frame.py", line 2030, in _getitem_array
+    indexer = self.ix._convert_to_indexer(key, axis=1)
+  File "/usr/local/envs/py27/lib/python2.7/site-packages/pandas/core/indexing.py", line 1210, in _convert_to_indexer
+    raise KeyError('%s not in index' % objarr[mask])
+KeyError: "['most_common_country'] not in index"
+```
+
+เพื่อทำความเข้าใจปัญหา ผมได้เข้าไปดูบรรทัดรอบๆจุดที่เกิด error ตามที่แจ้งมาใน error message ด้านบน (รอบๆบรรทัด 494 ในฟังก์ชั่น `user_countries_per_auction`)
+<center>
+  <figure>
+      <img src="../images/page_1/code_line494.png" width="70%" height="70%" style="border: 0.5px solid #555;">
+      <figcaption>*รอบๆบรรทัดที่เกิด KeyError*</figcaption>
+  </figure>
+</center>
+
+หลังจากนั้นผมได้แยกโค้ดเฉพาะส่วนนี้ออกมา และทำการ `print` เพื่อสังเกต data frame ที่ถูกสร้างขึ้นระหว่างที่บรรทัดเหล่านี้รัน
+```python
+with open('bidsX.pkl', 'rb') as f: # 'wb' for write binary mode
+    bids, X = pickle.load(f)
+    
+a = bids.groupby(['bidder_id']).country.value_counts().reset_index()
+print(a.head(20)) # (a)
+b = a.groupby(['bidder_id']).agg(lambda x: x.iloc[0]).reset_index()
+print(b.head(20)) # (b1)
+b= b.rename(columns = {'level_1':'most_common_country'})
+print(b.head(20)) # (b2)
+X = pd.merge(X, b[['bidder_id','most_common_country']], on='bidder_id', how='left')
+```
+
+::: {layout="[[-25,50,-25], [50,50]]"}
+![Output A: `a.head(20)`](../images/page_1/code_a_head.png)
+
+![Output B1: `b.head(20)`](../images/page_1/code_b_head_01.png)
+
+![Output B2: `b.head(20)`](../images/page_1/code_b_head_02.png)
+:::
+
+สิ่งแรกที่สังเกตได้คือเอาต์พุทจากบรรทัด b1 และ b2 เหมือนกัน ซึ่งตรงนี้ทำให้คิดว่า บรรทัดที่อยู่เหนือ b2 ล้มเหลวในการเปลี่ยนชื่อคอลัมน์ให้เป็น `most_common_country` (ถ้าหากมันไม่ล้มเหลว ชื่อคอลัมน์ `most_common_country`ควรจะปรากฎใน header ของ data frame ในเอาต์พุท B2)
+
+จุดน่าสนใจที่สองคือ ถ้าเราดูความสัมพันธ์ระหว่างเอาต์พุท A และ B1 จะสังเกตเห็นว่า แต่ละแถวใน B1 มาจาก การเลือกแถวใน A ที่มีค่าในคอลัมน์ที่สามมากที่สุดสำหรับแต่ละ bidder_id หากให้ตีความแบบคร่าวๆ วัตถุประสงค์ของบรรทัดที่อยู่เหนือ b1 ก็คือการเลือกแถวออกมาจาก data frame `a` โดยใช้ "ความถี่" เป็นเกณฑ์
+
+ข้อสังเกตที่สองบ่งบอกเป็นนัยๆว่า บางทีเราอาจจะต้องการเปลี่ยนชื่อของคอลัมน์ที่สองในเอาต์พุท B1 จาก `country` เฉยๆให้เป็น `most_common_country` เพราะความหมายของคำว่า most common ม้นบ่งบอกถึงการที่ประเทศนั้นมีความถี่มากที่สุด ความต้องการที่จะเปลี่ยนชื่อนี้นำไปสู่การใช้คำสั่ง `rename` จากชื่อ `level_1` ซึ่งไม่ประสบความสำเร็จตามข้อสังเกตแรก ซึ่งเป็นไปได้ว่า ในโค้ดต้นฉบับจริงๆที่ small yellow duck ใช้ตอนปี 2015 data frame `b` ณ บรรทัดนี้(บรรทัดที่มี `rename`) มีชื่อคอลัมน์ว่า `level_1` แทนที่จะเป็น `country`
+
+หรือก็คือปัญหาเกิดจากว่าภายใต้ environment/package version ที่แตกต่างกันระหว่างโค้ดของผม กับ small yellow duck  ทำให้ `b` ที่ถูกสร้างมาจากบรรทัดเหนือ b1 มีความแตกต่างกัน คือคอลัมน์ที่สองของผมชื่อว่า `country` ส่วนของ small yellow duck ชื่อคอลัมน์จะเป็น `level_1`
+
+ไม่ว่าชื่อคอลัมน์ ณ เอาต์พุท B1 จะเป็นอะไรก็ตามแต่ ความพยายามที่ small yellow duck จะเปลี่ยนมันให้เป็น `most_common_country` ก็เป็นเครื่องยืนยันว่าการคำนวณที่เกิดขึ้นนั้นถูก(การที่ในโค้ดของเราเลือกแถวที่ความถี่สูงสุดมาไว้ในเอาต์พุท B1) ที่เหลือก็แค่ไม่ต้องไปสนใจชื่อคอลัมน์ `level_1` แค่ทำการเปลี่ยนชื่อจาก `country` ให้เป็น `most_common_country`
+
+การแก้ไขด้านล่างทำให้โค้ดรันได้สำเร็จจนกระทั่งผลิตไฟล์เอาต์พุท submission.csv
+<center>
+  <figure>
+      <img src="../images/page_1/code_line494_edited.png" width="70%" height="70%" style="border: 0.5px solid #555;">
+      <figcaption>*ส่วนที่แก้ไขเพื่อกำจัด KeyError*</figcaption>
+  </figure>
+</center>

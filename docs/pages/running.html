@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -39,6 +73,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-b512256bc363577b27543e003c495f0c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-contrib/iconify-3.0.0/iconify-icon.min.js"></script>
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -162,8 +197,29 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#บทนำ" id="toc-บทนำ" class="nav-link active" data-scroll-target="#บทนำ">บทนำ</a></li>
+  <li><a href="#เนอหาหลก" id="toc-เนอหาหลก" class="nav-link" data-scroll-target="#เนอหาหลก">เนื้อหาหลัก</a>
+  <ul class="collapse">
+  <li><a href="#guess-the-python-version" id="toc-guess-the-python-version" class="nav-link" data-scroll-target="#guess-the-python-version">Guess the Python Version</a></li>
+  <li><a href="#install-python-2.7-and-dependencies" id="toc-install-python-2.7-and-dependencies" class="nav-link" data-scroll-target="#install-python-2.7-and-dependencies">Install Python 2.7 and Dependencies</a>
+  <ul class="collapse">
+  <li><a href="#install-miniconda" id="toc-install-miniconda" class="nav-link" data-scroll-target="#install-miniconda">Install Miniconda</a></li>
+  <li><a href="#creat-environment-and-activate-it" id="toc-creat-environment-and-activate-it" class="nav-link" data-scroll-target="#creat-environment-and-activate-it">Creat Environment and Activate it</a></li>
+  <li><a href="#install-dependencies" id="toc-install-dependencies" class="nav-link" data-scroll-target="#install-dependencies">Install Dependencies</a></li>
+  <li><a href="#issues-with-pandas" id="toc-issues-with-pandas" class="nav-link" data-scroll-target="#issues-with-pandas">Issues with Pandas</a></li>
+  </ul></li>
+  <li><a href="#edit-and-run-the-code" id="toc-edit-and-run-the-code" class="nav-link" data-scroll-target="#edit-and-run-the-code">Edit and Run the Code</a>
+  <ul class="collapse">
+  <li><a href="#fix-keyerror" id="toc-fix-keyerror" class="nav-link" data-scroll-target="#fix-keyerror">Fix KeyError</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -187,11 +243,329 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>พูดถึง score ของ notebook + leaderboard</p>
-<p>พูดถึง การแก้โค้ด ตรง level_1</p>
-<p>บลาๆ จำไม่ได้ กลับไปดูในเวอร์ชั่นแรกๆของ kaggle notebook หรือไม่ก็ plan.doc</p>
+<section id="บทนำ" class="level1">
+<h1>บทนำ</h1>
+<p>ก่อนที่จะเริ่มต้นทำการพอร์ตโค้ดจาก Python เป็น R สิ่งแรกที่ผมทำคือการรันโค้ดต้นฉบับดูก่อน การทำแบบนี้มีประโยชน์คือ หลังจากที่เราสามารถรันโค้ดต้นฉบับได้แล้ว เราจะได้เอาต์พุตคือไฟล์ที่ชื่อว่า submission.csv ซึ่งเราสามารถทำการ submit เข้าไปยังการแข่งขันในเว็บ Kaggle และได้รับแจ้งว่าคะแนนเป็นเท่าไหร่ ในภายหลังเราสามารถใช้คะแนนนี้เป็น baseline ในการชี้วัดว่า R implementation ของเราทำงานถูกหรือไม่ โดยการ submit เอาต์พุตที่ได้มาจากการรันโค้ด R แล้วเปรียบเทียบคะแนนที่ได้รับกับคะแนนของโค้ดต้นฉบับ</p>
+<p><strong>Note.</strong></p>
+<ul>
+<li>โค้ดต้นฉบับสามารถดาวน์โหลดได้จาก small yellow duck’s <a href="https://github.com/small-yellow-duck/facebook_auction">github <iconify-icon role="img" inline="" icon="fa6-brands:github" aria-label="Icon github from fa6-brands Iconify.design set." title="Icon github from fa6-brands Iconify.design set."></iconify-icon></a></li>
+<li>ด้วยการแก้ไขจากโค้ดต้นฉบับ ผมได้สร้างโค้ดพร้อมคะแนนจากการ submit ไว้แล้วเป็น Kaggle’s notebook สามารถดูได้ที่ <a href="https://www.kaggle.com/code/cprk87/original-get-it-running">Kaggle</a>
+<ul>
+<li>คะแนนของ submission ใน notebook จะเป็น 0.93888 (Private Score)</li>
+<li>คะแนนของ small yellow duck ถ้าดูจาก <a href="https://www.kaggle.com/competitions/facebook-recruiting-iv-human-or-bot/leaderboard">leaderboard</a> จะเป็น 0.94167</li>
+</ul></li>
+</ul>
+<p>จะเห็นว่าคะแนนจาก script ที่ผมวางใน kaggle กับ คะแนนของ small yellow duck มีความเตกต่างกันอยู่ ความแตกต่างนี้อาจเกิดได้จากหลายสาเหตุเช่น เวอร์ชั่นก์ของ Python รวมถึงแพ็คเกจที่ทำการติดตั้งไม่เหมือนกันทั้งหมด (เราไม่มีทางทราบว่า small yellow duck ใช้ package เวอร์ชั่นไหนบ้างเนื่องจากไม่ได้เปิดเผย requirements.txt) สาเหตุอื่นก็อย่างเช่น random seed ของ machine learning model แตกต่างกัน เป็นต้น</p>
+<p>อย่างไรก็ดี คะแนน 0.93888 ของโค้ดของผม ก็จัดว่าเป็นคะแนนที่สูงถ้าเทียบกับผู้เข้าแข่งขันอื่นๆใน leaderboard โดยที่จริงๆแล้วคะแนนนี้อยู่ระหว่างคะแนนของผู้เข้าแข่งขันที่ได้อันดับ 11 และ 12 ดังนั้นจึงอาจพอสรุปได้ว่า โค้ดที่ผมนำมาวางใน kaggle นี้เป็นโค้ดที่ใช้การได้ เหมาะแก่การนำมาเป็นต้นแบบในการเขียนขึ้นใหม่ในภาษา R</p>
+<center>
+<figure class="figure">
+<img src="../images/page_1/leaderboard.png" width="90%" style="border: 0.5px solid #555;" class="figure-img">
+<figcaption>
+<em>source: <a href="https://www.kaggle.com/competitions/facebook-recruiting-iv-human-or-bot/leaderboard">https://www.kaggle.com/competitions/facebook-recruiting-iv-human-or-bot/leaderboard</a></em>
+</figcaption>
+</figure>
+</center>
+</section>
+<section id="เนอหาหลก" class="level1">
+<h1>เนื้อหาหลัก</h1>
+<p>เนื้อหาถัดไปของหน้านี้ จะเป็นการอธิบายถึงขั้นตอนว่า หลังจากนำโค้ดต้นฉบับของ small yellow duck มาวางใน Kaggle’s notebook แล้ว จะต้องทำอะไรบ้างเพื่อให้โค้ดสามารถรัน และสร้างเอาต์พุตที่สามารถ submit เข้าไปในการแข่งขันได้</p>
+<section id="guess-the-python-version" class="level2">
+<h2 class="anchored" data-anchor-id="guess-the-python-version">Guess the Python Version</h2>
+<p>โค้ดต้นฉบับของ small yellow duck ถูกคอมมิตใน github ในเดือนมิถุนายนปี 2015 (ดูได้จาก <a href="https://github.com/small-yellow-duck/facebook_auction/commits/master/">github <iconify-icon role="img" inline="" icon="fa6-brands:github" aria-label="Icon github from fa6-brands Iconify.design set." title="Icon github from fa6-brands Iconify.design set."></iconify-icon></a>) ซึ่งในช่วงนั้น Python 2 ยังเป็นที่นิยมใช้กันอยู่ จึงมีความเป็นไปได้ว่า โค้ดต้นฉบับจะใช้ Python เวอร์ชั่นก์นี้ นอกจากนี้ยังมีอีกข้อสังเกตหนึ่งคือ ในโค้ดของ small yellow duck มีการใช้คำสั่ง print โดยไม่ใส่วงเล็บล้อมอาร์กิวเมนต์ ซึ่งใน Python 3 ไม่อนุญาตให้ทำแบบนี้ ในขณะที่ใน Python 2 สามารถทำได้</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> bid_order(X, bids):</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    bids <span class="op">=</span> bids.groupby(<span class="st">'auction'</span>).<span class="bu">apply</span>(<span class="bu">enumerate</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> bids.sort(<span class="st">'time'</span>, ascending<span class="op">=</span><span class="va">True</span>).groupby(<span class="st">'auction'</span>, as_index<span class="op">=</span><span class="va">False</span>).first()</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> a.groupby(<span class="st">'bidder_id'</span>).size().reset_index()</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    b<span class="op">=</span> b.rename(columns <span class="op">=</span> {<span class="dv">0</span>:<span class="st">'num_first_bid'</span>})    </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> pd.merge(X, b, on<span class="op">=</span><span class="st">'bidder_id'</span>, how<span class="op">=</span><span class="st">'left'</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span> X.columns</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    ...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>เพื่อความเฉพาะเจาะจงยิ่งขึ้น เรามาดู chart ที่บ่งบอกถึงสถานะเวอร์ชันของ Python จะเห็นได้ว่า ณ ปี 2015 Python 2.6 จะเก่าเกินไปเพราะอยู่ในสถานะ end-of-life ผมจึงคิดว่า ณ ขณะนั้น มีความเป็นไปได้ว่า small yellow duck จะใช้ Python 2.7 มากที่สุด</p>
+<center>
+<figure class="figure">
+<img src="../images/page_1/python_version.png" width="70%" height="70%" style="border: 0.5px solid #555;" class="figure-img">
+<figcaption>
+<em>source: <a href="https://devguide.python.org/versions/">https://devguide.python.org/versions/</a></em>
+</figcaption>
+</figure>
+</center>
+</section>
+<section id="install-python-2.7-and-dependencies" class="level2">
+<h2 class="anchored" data-anchor-id="install-python-2.7-and-dependencies">Install Python 2.7 and Dependencies</h2>
+<p>ณ เวลาที่เขียนบทความนี้ เวอร์ชั่นของ Python ที่รันบน Kaggle notebook เป็น Python 3.13 ดังนั้นถ้าเราจะรัน Python 2.7 จะต้องหาวิธีรัน Python หลายเวอร์ชั่น บน notebook ซึ่งผมจะใช้ เครื่องมือที่ชื่อว่า Miniconda เพื่อทำสิ่งนี้</p>
+<center>
+<figure class="figure">
+<img src="../images/page_1/kaggle_default_python.png" style="border: 0.5px solid #555;" class="figure-img">
+<figcaption>
+<em>Default เวอร์ชั่นของ Python ใน Kaggle notebook, ข้อมูล ณ กรกฎาคม 2025</em>
+</figcaption>
+</figure>
+</center>
+<center>
+<figure class="figure">
+<img src="../images/page_1/miniconda_explained.png" width="70%" height="70%" style="border: 0.5px solid #555;" class="figure-img">
+<figcaption>
+<em>source: คำตอบจาก Gemini</em>
+</figcaption>
+</figure>
+</center>
+<section id="install-miniconda" class="level3">
+<h3 class="anchored" data-anchor-id="install-miniconda">Install Miniconda</h3>
+<p>จากการเข้าไปดูในเนื้อหาของไฟล์ในโฟลเดอร์ <code>etc</code> พบว่า Kaggle notebook รันอยู่บนระบบปฎิบัติการ Ubuntu ซึ่งเป็น Linux</p>
+<center>
+<figure class="figure">
+<img src="../images/page_1/kaggle_os.png" width="70%" height="70%" style="border: 0.5px solid #555;" class="figure-img">
+<figcaption>
+<em>เวอร์ชั่นของระบบปฎิบัติการที่ Kaggle notebook ตั้งอยู่</em>
+</figcaption>
+</figure>
+</center>
+<p>ซึ่งถ้าเข้าไปดูขั้นตอนการติดตั้ง Miniconda ใน <a href="https://www.anaconda.com/docs/getting-started/miniconda/install#linux">official website</a> ก็จะพบคำแนะนำให้ติดตั้งด้วยคำสั่งดังต่อไปนี้</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> ~/miniconda3</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh <span class="at">-O</span> ~/miniconda3/miniconda.sh</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> ~/miniconda3/miniconda.sh <span class="at">-b</span> <span class="at">-u</span> <span class="at">-p</span> ~/miniconda3</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> ~/miniconda3/miniconda.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>ใน notebook ของผม ได้ทำการแก้ไขเล็กน้อยในบรรทัดที่สาม โดยได้แก้ argument ตัวสุดท้ายให้เป็น <code>/usr/local</code></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> ~/miniconda3/miniconda.sh <span class="at">-b</span> <span class="at">-u</span> <span class="at">-p</span> /usr/local</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+ที่ทำอย่างนี้เพื่อให้ executable <code>conda</code> ถูกติดตั้งลงไปใน <code>/usr/local/bin</code> ซึ่งอยู่ใน environment variable <code>PATH</code> อยู่แล้ว
+<center>
+<figure class="figure">
+<img src="../images/page_1/kaggle_env_path.png" width="70%" height="70%" style="border: 0.5px solid #555;" class="figure-img">
+<figcaption>
+<em>โฟลเดอร์ที่ miniconda ทำการติดตั้ง และ PATH</em>
+</figcaption>
+</figure>
+</center>
+</section>
+<section id="creat-environment-and-activate-it" class="level3">
+<h3 class="anchored" data-anchor-id="creat-environment-and-activate-it">Creat Environment and Activate it</h3>
+<p>เราสามารถใช้ คำสั่ง <code>conda</code> ในการสร้าง virtual environment โดยที่ระบุเวอร์ชั่นของ Python ที่จะให้ทำการติดตั้งด้วยได้</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">!conda</span> create <span class="at">-y</span> <span class="at">-q</span> <span class="at">--name</span> py27 python=2.7</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>หลังจากสร้าง virtual environment แล้ว เราสามารถ activate มันเพื่อใช้งาน <br> ในรูปด้านล่างแสดงถึง</p>
+<ul>
+<li>ก่อนที่เราจะ activate ถ้าใช้คำสั่ง python จะเป็นการเรียก python default version ของ Kaggle notebook</li>
+<li>ภายในบรรทัดเดียวกับที่เรา activate virtual environment (ที่มีชื่อว่า <code>py27</code>) การใช้คำสั่ง python จะไปเรียก python เวอร์ชั่นที่เราติดตั้งไว้ใน environment</li>
+</ul>
+<center>
+<figure class="figure">
+<img src="../images/page_1/python_after_activate.png" width="70%" height="70%" style="border: 0.5px solid #555;" class="figure-img">
+<figcaption>
+<em>บรรทัดแรก รัน Python เฉยๆ ในขณะที่บรรทัดที่สอง รัน Python พร้อมกับ activate virtual environment</em>
+</figcaption>
+</figure>
+</center>
+</section>
+<section id="install-dependencies" class="level3">
+<h3 class="anchored" data-anchor-id="install-dependencies">Install Dependencies</h3>
+<p>Virtual environment ที่เพิ่งถูกสร้างขึ้นมา ถึงแม้จะมีเวอร์ชันของ Python ที่เข้ากันได้กับโค้ดของ small yellow duck แล้ว แต่ตัวโค้ดก็ยังไม่สามารถรันได้ เพราะใน environment ยังไม่ได้ทำการลง Python packages ที่ในโค้ดใช้</p>
+<p>เราสามารถดูว่า packages ที่ต้องติดตั้งมีอะไรบ้างได้จากที่บรรทัดที่เป็นการ import</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#from matplotlib import pyplot as plt</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sklearn.preprocessing <span class="im">as</span> preprocessing</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> SGDClassifier</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVC</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> AdaBoostClassifier</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> GradientBoostingClassifier</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> ExtraTreesClassifier</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.naive_bayes <span class="im">import</span> GaussianNB</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression, BayesianRidge</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> MiniBatchKMeans</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> roc_auc_score</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>จะเห็นได้ว่า package ที่ในโค้ดใช้ก็จะมี <code>pandas</code>, <code>numpy</code>, <code>matplotlib</code> และ <code>scikit-learn</code> เท่านั้น</p>
+<p>ทีนี้หากผู้อ่านดูโค้ดด้านบนอาจจะสังเกตว่าบรรทัด <code>matplotlib</code> ได้ถูกคอมเมนต์ไว้ ซึ่งผมขอสารภาพว่าผมเป็นคนคอมเมนต์ออกเอง เหตุผลมาจากว่า การที่มีบรรทัดนี้อยู่จะบังคับให้ ผมต้องติดตั้ง package ที่ชื่อ <code>matplotlib-inline</code> ซึ่งตัว installer ไม่สามารถหาเวอร์ชั่นที่เหมาะสมกับ Python 2.7 ได้ ดังที่แสดงไว้ใน error ด้านล่าง</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>Could <span class="kw">not</span> solve <span class="cf">for</span> environment specs</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>The following packages are incompatible</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>├─ matplotlib<span class="op">-</span>inline <span class="op">=*</span> <span class="op">*</span> <span class="kw">is</span> installable <span class="cf">with</span> the potential options</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>│  ├─ matplotlib<span class="op">-</span>inline <span class="fl">0.1.6</span> would require</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>│  │  └─ python <span class="op">&gt;=</span><span class="fl">3.10</span>,<span class="op">&lt;</span><span class="fl">3.11.0</span><span class="er">a0</span> <span class="op">*</span>, which can be installed<span class="op">;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>│  ├─ matplotlib<span class="op">-</span>inline <span class="fl">0.1.6</span> would require</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>│  │  └─ python <span class="op">&gt;=</span><span class="fl">3.11</span>,<span class="op">&lt;</span><span class="fl">3.12.0</span><span class="er">a0</span> <span class="op">*</span>, which can be installed<span class="op">;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>│  ├─ matplotlib<span class="op">-</span>inline <span class="fl">0.1.6</span> would require</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>│  │  └─ python <span class="op">&gt;=</span><span class="fl">3.12</span>,<span class="op">&lt;</span><span class="fl">3.13.0</span><span class="er">a0</span> <span class="op">*</span>, which can be installed<span class="op">;</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>│  ├─ matplotlib<span class="op">-</span>inline <span class="fl">0.1.6</span> would require</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>│  │  └─ python <span class="op">&gt;=</span><span class="fl">3.13</span>,<span class="op">&lt;</span><span class="fl">3.14.0</span><span class="er">a0</span> <span class="op">*</span>, which can be installed<span class="op">;</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>│  ├─ matplotlib<span class="op">-</span>inline <span class="fl">0.1.6</span> would require</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>│  │  └─ python <span class="op">&gt;=</span><span class="fl">3.7</span>,<span class="op">&lt;</span><span class="fl">3.8.0</span><span class="er">a0</span> <span class="op">*</span>, which can be installed<span class="op">;</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>│  ├─ matplotlib<span class="op">-</span>inline <span class="fl">0.1.6</span> would require</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>│  │  └─ python <span class="op">&gt;=</span><span class="fl">3.8</span>,<span class="op">&lt;</span><span class="fl">3.9.0</span><span class="er">a0</span> <span class="op">*</span>, which can be installed<span class="op">;</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>│  ├─ matplotlib<span class="op">-</span>inline <span class="fl">0.1.6</span> would require</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>│  │  └─ python <span class="op">&gt;=</span><span class="fl">3.9</span>,<span class="op">&lt;</span><span class="fl">3.10.0</span><span class="er">a0</span> <span class="op">*</span>, which can be installed<span class="op">;</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>│  └─ matplotlib<span class="op">-</span>inline <span class="fl">0.1.2</span> would require</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>│     └─ python <span class="op">&gt;=</span><span class="fl">3.6</span> <span class="op">*</span>, which can be installed<span class="op">;</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>└─ pin on python <span class="fl">2.7</span>.<span class="op">*</span> <span class="op">=*</span> <span class="op">*</span> <span class="kw">is</span> <span class="kw">not</span> installable because it requires</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>   └─ python <span class="op">=</span><span class="fl">2.7</span> <span class="op">*</span>, which conflicts <span class="cf">with</span> <span class="bu">any</span> installable versions previously reported.</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>Pins seem to be involved <span class="kw">in</span> the conflict. Currently pinned specs:</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a> <span class="op">-</span> python<span class="op">=</span><span class="fl">2.7</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>อย่างไรก็ดี ถ้าลองอ่านโค้ดต้นฉบับดูจะพบว่า <strong>บรรทัดที่เกี่ยวกับการ plot โดยใช้ matplotlib นั้นถูกคอมเมนต์ไว้โดย small yellow duck อยู่แล้ว</strong> ทำให้จริงๆแล้วถึงจะไม่ import <code>matplotlib</code> โค้ดก็สามารถทำงานได้ตามปกติ</p>
+</section>
+<section id="issues-with-pandas" class="level3">
+<h3 class="anchored" data-anchor-id="issues-with-pandas">Issues with Pandas</h3>
+<p>ขออนุญาตย้อนกลับมาเรื่องการ ติดตั้ง package ใน virtual environment นะครับ <br> เช่นเดียวกับที่เรารัน “python –version” พร้อมกับการ activate environment ใน section ด้านบน เราสามารถรัน “python -m pip install” เพื่อทำการติดตั้ง package ลงในไลบรารีของ environment ที่เรา activate ได้</p>
+<p>คำสั่งด้านล่างทำการติดตั้ง <code>pandas</code>, <code>numpy</code> และ <code>scikit-learn</code> ลงใน virtual environment <code>py27</code></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">!source</span> activate py27 <span class="kw">&amp;&amp;</span> <span class="ex">python</span> <span class="at">-m</span> pip install pandas numpy scikit-learn</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>อย่างไรก็ดี คำสั่งนี้มีปัญหาก็คือ เนื่องจากเราไม่ระบุเวอร์ชันที่เจาะจงของ package ตัว <code>pip</code> จะลง pandas(และ numpy, scikit-learn) เป็นเวอร์ชันที่ใหม่ที่สุดที่เข้ากันได้กับ Python 2.7 ผลลัพธ์ของการรันโค้ดต้นฉบับ หลังจากติดตั้ง package ด้วยคำสั่งนี้คือ error</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>Traceback (most recent call last):</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  File <span class="st">"&lt;stdin&gt;"</span>, line <span class="dv">1015</span>, <span class="kw">in</span> <span class="op">&lt;</span>module<span class="op">&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  File <span class="st">"&lt;stdin&gt;"</span>, line <span class="dv">69</span>, <span class="kw">in</span> load</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  File <span class="st">"/usr/local/envs/py27/lib/python2.7/site-packages/pandas/core/generic.py"</span>, line <span class="dv">5067</span>, <span class="kw">in</span> <span class="fu">__getattr__</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">object</span>.<span class="fu">__getattribute__</span>(<span class="va">self</span>, name)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="pp">AttributeError</span>: <span class="st">'DataFrame'</span> <span class="bu">object</span> has no attribute <span class="st">'sort'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Error นี้เกิดมาจากการที่ โค้ดต้นฉบับใช้ฟังก์ชัน <code>sort</code> ของ object <code>DataFrame</code></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> load():</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    bids <span class="op">=</span> bids.sort([<span class="st">'auction'</span>, <span class="st">'time'</span>])</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    b <span class="op">=</span> bot_or_human[[<span class="st">'bidder_id'</span>, <span class="st">'address'</span>]].groupby(<span class="st">'address'</span>).size().reset_index().sort(<span class="dv">0</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        ...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>ซึ่งฟังก์ชั่นนี้ใช้ได้แต่เฉพาะใน <code>pandas</code> ในเวอร์ชันที่ค่อนข้างเก่า แต่ในคำสั่งติดตั้งของเราเลือกลง <code>pandas</code>เวอร์ชั่นใหม่ที่สุดที่เป็นไปได้(สำหรับ Python 2.7)</p>
+ข้อมูลจาก Stackoverflow ระบุว่าฟังก์ชั่นนี้ถูก deprecated ใน Pandas เวอร์ชัน 0.17.0 และถูกเอาออกใน เวอร์ชัน 0.20.0
+<center>
+<figure class="figure">
+<img src="../images/page_1/code_sort.png" width="70%" height="70%" style="border: 0.5px solid #555;" class="figure-img">
+<figcaption>
+<em>source: <a href="https://stackoverflow.com/a/44123892/718529">https://stackoverflow.com/a/44123892/718529</a></em>
+</figcaption>
+</figure>
+</center>
+<p>จากข้อมูลตรงนี้ สิ่งที่สมเหตุสมผลที่สุดก็คือการ ติดตั้งโดยระบุเวอร์ชันของ Pandas เป็นเวอร์ชันก่อน 0.17.0 อย่างไรก็ดี ผมได้ลองติดตั้งทั้ง Pandas 0.14.X, 0.15.X และ 0.16.X แล้วพบว่าเมื่อรันโค้ดต้นฉบับภายหลังการติดตั้ง จะเกิด ImportError คล้ายๆกันหมดในทุกเวอร์ชัน ต่อไปนี้เป็นตัวอย่าง error ที่พบ (ขออนุญาตนำมาแสดงเพียงสองเวอร์ชันเท่านั้น)</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>Traceback (most recent call last):</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  File <span class="st">"&lt;stdin&gt;"</span>, line <span class="dv">14</span>, <span class="kw">in</span> <span class="op">&lt;</span>module<span class="op">&gt;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  File <span class="st">"/usr/local/envs/py27/lib/python2.7/site-packages/pandas/__init__.py"</span>, line <span class="dv">6</span>, <span class="kw">in</span> <span class="op">&lt;</span>module<span class="op">&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="im">from</span> . <span class="im">import</span> hashtable, tslib, lib</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="pp">ImportError</span>: <span class="op">/</span>usr<span class="op">/</span>local<span class="op">/</span>envs<span class="op">/</span>py27<span class="op">/</span>lib<span class="op">/</span>python2<span class="fl">.7</span><span class="op">/</span>site<span class="op">-</span>packages<span class="op">/</span>pandas<span class="op">/</span>lib.so: undefined symbol: is_float_object</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><em>ผลลัพธ์ของการรันโค้ด Python เมื่อทำการลง pandas 0.14.1</em></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>Traceback (most recent call last):</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  File <span class="st">"&lt;stdin&gt;"</span>, line <span class="dv">14</span>, <span class="kw">in</span> <span class="op">&lt;</span>module<span class="op">&gt;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  File <span class="st">"/usr/local/envs/py27/lib/python2.7/site-packages/pandas/__init__.py"</span>, line <span class="dv">7</span>, <span class="kw">in</span> <span class="op">&lt;</span>module<span class="op">&gt;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="im">from</span> . <span class="im">import</span> hashtable, tslib, lib</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  File <span class="st">"pandas/tslib.pyx"</span>, line <span class="dv">2839</span>, <span class="kw">in</span> init pandas.tslib (pandas<span class="op">/</span>tslib.c:<span class="dv">80041</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  File <span class="st">"pandas/algos.pyx"</span>, line <span class="dv">64</span>, <span class="kw">in</span> init pandas.algos (pandas<span class="op">/</span>algos.c:<span class="dv">180213</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="pp">ImportError</span>: <span class="op">/</span>usr<span class="op">/</span>local<span class="op">/</span>envs<span class="op">/</span>py27<span class="op">/</span>lib<span class="op">/</span>python2<span class="fl">.7</span><span class="op">/</span>site<span class="op">-</span>packages<span class="op">/</span>pandas<span class="op">/</span>lib.so: undefined symbol: is_float_object</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><em>ผลลัพธ์ของการรันโค้ด Python เมื่อทำการลง pandas 0.15.0</em></p>
+<p>Error คล้ายๆกันนี้เกิดขึ้นไปจนถึง Pandas เวอร์ชัน 0.17.X จนเมื่่อผมลองติดตั้ง Pandas 0.18.0 ปัญหาก็หายไป สรุปความได้ว่าคำสั่งติดตั้ง packages ที่ผมตัดสินใจใช้ในโค้ดที่ทำการแก้ไขก็จะเป็น</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">!source</span> activate py27 <span class="kw">&amp;&amp;</span> <span class="ex">python</span> <span class="at">-m</span> pip install pandas==0.18.0 numpy scikit-learn</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>ซึ่ง ณ เวอร์ชั่นนี้ ฟังก์ชั่น <code>DataFrame.sort</code> ยังถูกแค่เพียง deprecated เท่านั้นแต่ยังไม่ถูก removed ดังนั้นข้อเสียก็จะเป็นเพียงว่าเวลารันโค้ดจะมีคำเตือนแบบนี้ปรากฎ</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>stdin<span class="op">&gt;</span>:<span class="dv">70</span>: <span class="pp">FutureWarning</span>: sort(columns<span class="op">=</span>....) <span class="kw">is</span> deprecated, use sort_values(by<span class="op">=</span>.....)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="edit-and-run-the-code" class="level2">
+<h2 class="anchored" data-anchor-id="edit-and-run-the-code">Edit and Run the Code</h2>
+<p>มีสองจุดที่ต้องทำการแก้ไข ก่อนที่จะทำให้โค้ดสามารถรันได้</p>
+ประการแรกไม่ซับซ้อนอะไร เนื่องจากว่าตัวโค้ดต้นฉบับจะทำแค่ประกาศและเขียนโค้ดของฟังก์ชั่น ถ้าเราจะรันก็จะต้องเพิ่มบรรทัดที่สั่งรันฟังชันก์เหล่านั้นเท่านั้นเอง ซึ่ง small yellow duck ได้ใส่คำอธิบายวิธีรันโค้ดไว้ในคอมเมนต์ด้านบนสุดของโค้ดดังในรูป
+<center>
+<figure class="figure">
+<img src="../images/page_1/code_comment.png" width="70%" height="70%" style="border: 0.5px solid #555;" class="figure-img">
+<figcaption>
+<em>คอมเมนต์โดย small yellow duck</em>
+</figcaption>
+</figure>
+</center>
+ซึ่งผมก็แค่นำโค้ดจากคอมเมนต์มาใส่ไว้ที่ด้านล่างสุดของโค้ดก่อนที่จะคลิกรันใน Kaggle notebook
+<center>
+<figure class="figure">
+<img src="../images/page_1/code_run_the_code.png" width="70%" height="70%" style="border: 0.5px solid #555;" class="figure-img">
+<figcaption>
+<em>เพิ่มการสั่งรันโค้ดไว้ที่ด้านล่างสุดของโค้ด</em>
+</figcaption>
+</figure>
+</center>
+<section id="fix-keyerror" class="level3">
+<h3 class="anchored" data-anchor-id="fix-keyerror">Fix KeyError</h3>
+<p>หลังจากแก้ไขจุดแรกไปแล้วและสั่งรัน ผลลัพธ์คือ <code>KeyError</code> ซึ่งนี่แหละคือจุดที่สองซึ่งต้องทำการแก้ไข(เพื่อให้ error นี้หายไป)</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>Traceback (most recent call last):</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  File <span class="st">"&lt;stdin&gt;"</span>, line <span class="dv">1020</span>, <span class="kw">in</span> <span class="op">&lt;</span>module<span class="op">&gt;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  File <span class="st">"&lt;stdin&gt;"</span>, line <span class="dv">858</span>, <span class="kw">in</span> build_X</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  File <span class="st">"&lt;stdin&gt;"</span>, line <span class="dv">494</span>, <span class="kw">in</span> user_countries_per_auction</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  File <span class="st">"/usr/local/envs/py27/lib/python2.7/site-packages/pandas/core/frame.py"</span>, line <span class="dv">1986</span>, <span class="kw">in</span> <span class="fu">__getitem__</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">self</span>._getitem_array(key)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  File <span class="st">"/usr/local/envs/py27/lib/python2.7/site-packages/pandas/core/frame.py"</span>, line <span class="dv">2030</span>, <span class="kw">in</span> _getitem_array</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    indexer <span class="op">=</span> <span class="va">self</span>.ix._convert_to_indexer(key, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  File <span class="st">"/usr/local/envs/py27/lib/python2.7/site-packages/pandas/core/indexing.py"</span>, line <span class="dv">1210</span>, <span class="kw">in</span> _convert_to_indexer</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">raise</span> <span class="pp">KeyError</span>(<span class="st">'</span><span class="sc">%s</span><span class="st"> not in index'</span> <span class="op">%</span> objarr[mask])</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="pp">KeyError</span>: <span class="st">"['most_common_country'] not in index"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+เพื่อทำความเข้าใจปัญหา ผมได้เข้าไปดูบรรทัดรอบๆจุดที่เกิด error ตามที่แจ้งมาใน error message ด้านบน (รอบๆบรรทัด 494 ในฟังก์ชั่น <code>user_countries_per_auction</code>)
+<center>
+<figure class="figure">
+<img src="../images/page_1/code_line494.png" width="70%" height="70%" style="border: 0.5px solid #555;" class="figure-img">
+<figcaption>
+<em>รอบๆบรรทัดที่เกิด KeyError</em>
+</figcaption>
+</figure>
+</center>
+<p>หลังจากนั้นผมได้แยกโค้ดเฉพาะส่วนนี้ออกมา และทำการ <code>print</code> เพื่อสังเกต data frame ที่ถูกสร้างขึ้นระหว่างที่บรรทัดเหล่านี้รัน</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">'bidsX.pkl'</span>, <span class="st">'rb'</span>) <span class="im">as</span> f: <span class="co"># 'wb' for write binary mode</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    bids, X <span class="op">=</span> pickle.load(f)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> bids.groupby([<span class="st">'bidder_id'</span>]).country.value_counts().reset_index()</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(a.head(<span class="dv">20</span>)) <span class="co"># (a)</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> a.groupby([<span class="st">'bidder_id'</span>]).agg(<span class="kw">lambda</span> x: x.iloc[<span class="dv">0</span>]).reset_index()</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(b.head(<span class="dv">20</span>)) <span class="co"># (b1)</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>b<span class="op">=</span> b.rename(columns <span class="op">=</span> {<span class="st">'level_1'</span>:<span class="st">'most_common_country'</span>})</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(b.head(<span class="dv">20</span>)) <span class="co"># (b2)</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> pd.merge(X, b[[<span class="st">'bidder_id'</span>,<span class="st">'most_common_country'</span>]], on<span class="op">=</span><span class="st">'bidder_id'</span>, how<span class="op">=</span><span class="st">'left'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div>
+
+</div>
+<div class="quarto-layout-panel" data-layout="[[-25,50,-25], [50,50]]">
+<div class="quarto-layout-row">
+<div class="quarto-figure-spacer quarto-layout-cell" style="flex-basis: 25.0%;justify-content: flex-start;">
+<p>&nbsp;</p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/page_1/code_a_head.png" class="img-fluid figure-img"></p>
+<figcaption>Output A: <code>a.head(20)</code></figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-figure-spacer quarto-layout-cell" style="flex-basis: 25.0%;justify-content: flex-start;">
+<p>&nbsp;</p>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/page_1/code_b_head_01.png" class="img-fluid figure-img"></p>
+<figcaption>Output B1: <code>b.head(20)</code></figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/page_1/code_b_head_02.png" class="img-fluid figure-img"></p>
+<figcaption>Output B2: <code>b.head(20)</code></figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>สิ่งแรกที่สังเกตได้คือเอาต์พุทจากบรรทัด b1 และ b2 เหมือนกัน ซึ่งตรงนี้ทำให้คิดว่า บรรทัดที่อยู่เหนือ b2 ล้มเหลวในการเปลี่ยนชื่อคอลัมน์ให้เป็น <code>most_common_country</code> (ถ้าหากมันไม่ล้มเหลว ชื่อคอลัมน์ <code>most_common_country</code>ควรจะปรากฎใน header ของ data frame ในเอาต์พุท B2)</p>
+<p>จุดน่าสนใจที่สองคือ ถ้าเราดูความสัมพันธ์ระหว่างเอาต์พุท A และ B1 จะสังเกตเห็นว่า แต่ละแถวใน B1 มาจาก การเลือกแถวใน A ที่มีค่าในคอลัมน์ที่สามมากที่สุดสำหรับแต่ละ bidder_id หากให้ตีความแบบคร่าวๆ วัตถุประสงค์ของบรรทัดที่อยู่เหนือ b1 ก็คือการเลือกแถวออกมาจาก data frame <code>a</code> โดยใช้ “ความถี่” เป็นเกณฑ์</p>
+<p>ข้อสังเกตที่สองบ่งบอกเป็นนัยๆว่า บางทีเราอาจจะต้องการเปลี่ยนชื่อของคอลัมน์ที่สองในเอาต์พุท B1 จาก <code>country</code> เฉยๆให้เป็น <code>most_common_country</code> เพราะความหมายของคำว่า most common ม้นบ่งบอกถึงการที่ประเทศนั้นมีความถี่มากที่สุด ความต้องการที่จะเปลี่ยนชื่อนี้นำไปสู่การใช้คำสั่ง <code>rename</code> จากชื่อ <code>level_1</code> ซึ่งไม่ประสบความสำเร็จตามข้อสังเกตแรก ซึ่งเป็นไปได้ว่า ในโค้ดต้นฉบับจริงๆที่ small yellow duck ใช้ตอนปี 2015 data frame <code>b</code> ณ บรรทัดนี้(บรรทัดที่มี <code>rename</code>) มีชื่อคอลัมน์ว่า <code>level_1</code> แทนที่จะเป็น <code>country</code></p>
+<p>หรือก็คือปัญหาเกิดจากว่าภายใต้ environment/package version ที่แตกต่างกันระหว่างโค้ดของผม กับ small yellow duck ทำให้ <code>b</code> ที่ถูกสร้างมาจากบรรทัดเหนือ b1 มีความแตกต่างกัน คือคอลัมน์ที่สองของผมชื่อว่า <code>country</code> ส่วนของ small yellow duck ชื่อคอลัมน์จะเป็น <code>level_1</code></p>
+<p>ไม่ว่าชื่อคอลัมน์ ณ เอาต์พุท B1 จะเป็นอะไรก็ตามแต่ ความพยายามที่ small yellow duck จะเปลี่ยนมันให้เป็น <code>most_common_country</code> ก็เป็นเครื่องยืนยันว่าการคำนวณที่เกิดขึ้นนั้นถูก(การที่ในโค้ดของเราเลือกแถวที่ความถี่สูงสุดมาไว้ในเอาต์พุท B1) ที่เหลือก็แค่ไม่ต้องไปสนใจชื่อคอลัมน์ <code>level_1</code> แค่ทำการเปลี่ยนชื่อจาก <code>country</code> ให้เป็น <code>most_common_country</code></p>
+การแก้ไขด้านล่างทำให้โค้ดรันได้สำเร็จจนกระทั่งผลิตไฟล์เอาต์พุท submission.csv
+<center>
+<figure class="figure">
+<img src="../images/page_1/code_line494_edited.png" width="70%" height="70%" style="border: 0.5px solid #555;" class="figure-img">
+<figcaption>
+<em>ส่วนที่แก้ไขเพื่อกำจัด KeyError</em>
+</figcaption>
+</figure>
+</center>
 
 
+</section>
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
